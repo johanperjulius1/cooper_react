@@ -3,7 +3,7 @@ import DisplayCooperResult from "./components/DisplayCooperResult";
 import InputFields from './components/InputFields';
 import LoginForm from "./components/LoginForm";
 import { authenticate } from './modules/auth';
-import { authenticate } from './modules/auth';
+
 
 
 
@@ -14,11 +14,12 @@ class App extends Component {
     age: "",
     renderLoginForm: false,
     authenticated: false,
-    message: ""
+    message: "",
+    entrySaved: false
   };
 
   onChangeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value, entrySaved: false });
   };
 
   render() {
@@ -37,13 +38,13 @@ class App extends Component {
             >
               Login
             </button>
-            <p>{message}</p>
+            <p id="message">{message}</p>
           </>
         );
         break;
       case authenticated:
         renderLogin = (
-          <p>Hi {JSON.parse(sessionStorage.getItem("credentials")).uid}</p>
+          <p id="message">Hi {JSON.parse(sessionStorage.getItem("credentials")).uid}</p>
         );
         break;
     }
@@ -55,14 +56,20 @@ class App extends Component {
           distance={this.state.distance}
           gender={this.state.gender}
           age={this.state.age}
+          authenticated={this.state.authenticated}
+          entrySaved={this.state.entrySaved}
+          entryHandler={() =>
+            this.setState({ entrySaved: true, updateIndex: true })
+          }
         />
+        
       </>
 
     );
   }
   onLogin = async e => {
     e.preventDefault();
-    const response = await authenticate(
+    const response = await authenticate (
       e.target.email.value,
       e.target.password.value
     );
